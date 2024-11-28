@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPraticien extends Document {
-    id: number;
     nom: string;
     prenom: string;
     tel: string;
@@ -13,7 +12,6 @@ export interface IPraticien extends Document {
 }
 
 const praticienSchema: Schema = new Schema({
-    id: { type: Number, required: true },
     nom: { type: String, required: true },
     prenom: { type: String, required: true },
     tel: { type: String, required: true },
