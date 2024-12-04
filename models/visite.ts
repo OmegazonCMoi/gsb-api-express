@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import mongooseEncryption from 'mongoose-encryption';
 
 export interface IVisite extends Document {
     dateVisite: Date;
@@ -14,6 +15,13 @@ const visiteSchema: Schema = new Schema({
     visiteur : { type: Schema.Types.ObjectId, ref: 'Visiteur', required: true },
     praticien : { type: Schema.Types.ObjectId, ref: 'Praticien', required: true },
     motif: { type: Schema.Types.ObjectId, ref: 'Motif', required: true }
+});
+
+const secretKey = process.env.SECRET_KEY;
+
+visiteSchema.plugin(mongooseEncryption, {
+  secret: secretKey,
+  encryptedFields: ['dateVisite', 'commentaire', 'visiteur', 'praticien', 'motif'],
 });
 
 export default mongoose.model<IVisite>('Visite', visiteSchema);

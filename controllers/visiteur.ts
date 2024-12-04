@@ -1,9 +1,16 @@
 import { Request, Response } from 'express';
 import Visiteur from '../models/visiteur';
+import { check } from 'express-validator';
 
 export const createVisiteur = async (req: Request, res: Response) => {
   try {
     const visiteur = new Visiteur(req.body);
+      check('nom').notEmpty(),
+      check('prenom').notEmpty(),
+      check('email').isEmail(),
+      check('password').isLength({ min: 6 }),
+      check('tel').isMobilePhone('any'),
+      check('dateEmbauche').isISO8601()
     const savedVisiteur = await visiteur.save();
     res.status(201).json(savedVisiteur);
   } catch (error) {
