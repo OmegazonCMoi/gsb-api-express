@@ -1,13 +1,13 @@
-import mongoose, { Schema, Document, CallbackError } from 'mongoose';
-import mongooseEncryption from 'mongoose-encryption';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
+import mongoose, { Schema, Document, CallbackError } from "mongoose";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 export interface IVisiteur extends Document {
   email: string;
   password: string;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 // Define the schema for the 'Visiteur' model (only email and password required)
@@ -15,7 +15,12 @@ const visiteurSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    // Optional fields or fields to be removed can be omitted
+    rue: { type: String },
+    ville: { type: String },
+    codePostal: { type: String },
+    nom: { type: String },
+    prenom: { type: String },
+    tel: { type: String },
   },
   { timestamps: true }
 );
@@ -24,14 +29,29 @@ const visiteurSchema: Schema = new Schema(
 const secretKey = process.env.SECRET_KEY as string;
 
 if (!secretKey) {
-  throw new Error('SECRET_KEY is not defined in environment variables');
+  throw new Error("SECRET_KEY is not defined in environment variables");
 }
 
-// Encrypt sensitive fields (in this case, we’ll just encrypt email and password)
-visiteurSchema.plugin(mongooseEncryption, {
-  secret: secretKey,
+// Hash password before saving
+visiteurSchema.pre<IVisiteur>("save", async function (next) {
+  if (this.isModified("password")) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    } catch (err) {
+      next(err as CallbackError);
+    }
+  }
+  next();
 });
 
+// Method for comparing passwords
+visiteurSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
 // Create and export the 'Visiteur' model
-const Visiteur = mongoose.model<IVisiteur>('Visiteur', visiteurSchema);
+const Visiteur = mongoose.model<IVisiteur>("Visiteur", visiteurSchema);
 export default Visiteur;
