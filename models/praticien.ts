@@ -27,7 +27,7 @@ const secretKey = process.env.SECRET_KEY;
 
 praticienSchema.plugin(mongooseEncryption, {
   secret: secretKey,
-  encryptedFields: ['nom', 'prenom', 'tel', 'email', 'rue', 'ville', 'codePostal', 'visites'],
+  encryptedFields: ['nom', 'prenom', 'tel', 'rue', 'ville', 'codePostal', 'visites'],
 });
 
 export default mongoose.model<IPraticien>('Praticien', praticienSchema);

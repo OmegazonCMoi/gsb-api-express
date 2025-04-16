@@ -114,3 +114,37 @@ export const getVisiteurs = async (_req: Request, res: Response) => {
     });
   }
 };
+
+export const getVisiteurById = async (req: Request, res: Response) => {
+    try {
+        const visiteur = await Visiteur.findById(req.params.id);
+        if (!visiteur) {
+        res.status(404).json({ message: "Visiteur not found" });
+        return;
+        }
+        res.status(200).json(visiteur);
+    } catch (error) {
+        res.status(500).json({
+        message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export const updateVisiteur = async (req: Request, res: Response) => {
+    try {
+        const updatedVisiteur = await Visiteur.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+        );
+        if (!updatedVisiteur) {
+        res.status(404).json({ message: "Visiteur not found" });
+        return;
+        }
+        res.status(200).json(updatedVisiteur);
+    } catch (error) {
+        res.status(500).json({
+        message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}

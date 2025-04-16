@@ -26,5 +26,3 @@ mongoose.connect('mongodb+srv://fabianmenoni:Zitoune69@express-test.jabh7.mongod
   });
 
 export default app;
-
-

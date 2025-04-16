@@ -17,7 +17,7 @@ export const createPraticien = async (req: Request, res: Response) => {
 
 export const getPraticiens = async (_req: Request, res: Response) => {
   try {
-    const praticiens = await Praticien.find();
+    const praticiens = await Praticien.find().populate('visites');
     res.status(200).json(praticiens);
   } catch (error) {
     if (error instanceof Error) {
