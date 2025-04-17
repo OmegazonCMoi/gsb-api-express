@@ -117,19 +117,23 @@ export const getVisiteurs = async (_req: Request, res: Response) => {
 };
 
 export const getVisiteurById = async (req: Request, res: Response) => {
-    try {
-        const visiteur = await Visiteur.findById(req.params.id);
-        if (!visiteur) {
-        res.status(404).json({ message: "Visiteur not found" });
-        return;
-        }
-        res.status(200).json(visiteur);
-    } catch (error) {
-        res.status(500).json({
-        message: error instanceof Error ? error.message : "Unknown error",
-        });
-    }
-}
+  try {
+      const visiteur = await Visiteur.findById(req.params.id)
+          .populate('portefeuillePraticiens')  
+          .exec();
+
+      if (!visiteur) {
+          res.status(404).json({ message: "Visiteur not found" });
+          return;
+      }
+
+      res.status(200).json(visiteur);
+  } catch (error) {
+      res.status(500).json({
+          message: error instanceof Error ? error.message : "Unknown error",
+      });
+  }
+};
 
 export const updateVisiteur = async (req: Request, res: Response) => {
     try {
@@ -167,10 +171,27 @@ export const addPraticienToPortefeuille = async (req: Request, res: Response, ne
       return;
     }
 
-    visiteur.portefeuillePraticiens.push(praticien);
+    visiteur.portefeuillePraticiens.push(praticienId);
+
     await visiteur.save();
 
     res.status(200).json({ message: "Praticien ajouté au portefeuille avec succès" });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur interne du serveur", error });
+  }
+};
+
+export const getPraticiensFromPortefeuille = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const visiteurId = req.params.idVisiteur;
+
+    const visiteur = await Visiteur.findById(visiteurId).populate('portefeuillePraticiens').exec();
+    if (!visiteur) {
+      res.status(404).json({ message: "Visiteur non trouvé" });
+      return;
+    }
+
+    res.status(200).json(visiteur.portefeuillePraticiens);
   } catch (error) {
     res.status(500).json({ message: "Erreur interne du serveur", error });
   }

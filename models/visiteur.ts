@@ -22,7 +22,7 @@ const visiteurSchema: Schema = new Schema(
     nom: { type: String },
     prenom: { type: String },
     tel: { type: String },
-    portefeuillePraticiens: [{ type: Schema.Types.Mixed }]
+    portefeuillePraticiens: [{ type: Schema.Types.ObjectId, ref: 'Praticien' }]
   },
   { timestamps: true }
 );
