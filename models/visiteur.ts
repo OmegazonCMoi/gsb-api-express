@@ -7,6 +7,7 @@ dotenv.config();
 export interface IVisiteur extends Document {
   email: string;
   password: string;
+  portefeuillePraticiens: any[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -21,6 +22,7 @@ const visiteurSchema: Schema = new Schema(
     nom: { type: String },
     prenom: { type: String },
     tel: { type: String },
+    portefeuillePraticiens: [{ type: Schema.Types.Mixed }]
   },
   { timestamps: true }
 );

@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { validationResult, body, check } from "express-validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Visiteur from "../models/visiteur";
+import Praticien from "../models/praticien";
 
 // Validators for signup (only email and password)
 export const signupValidators = [
@@ -148,3 +149,29 @@ export const updateVisiteur = async (req: Request, res: Response) => {
         });
     }
 }
+
+export const addPraticienToPortefeuille = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { praticienId } = req.body;
+    const visiteurId = req.params.idVisiteur;
+
+    const praticien = await Praticien.findById(praticienId).lean();
+    if (!praticien) {
+      res.status(404).json({ message: "Praticien non trouvé" });
+      return;
+    }
+
+    const visiteur = await Visiteur.findById(visiteurId);
+    if (!visiteur) {
+      res.status(404).json({ message: "Visiteur non trouvé" });
+      return;
+    }
+
+    visiteur.portefeuillePraticiens.push(praticien);
+    await visiteur.save();
+
+    res.status(200).json({ message: "Praticien ajouté au portefeuille avec succès" });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur interne du serveur", error });
+  }
+};
