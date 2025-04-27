@@ -9,7 +9,7 @@ export interface IPraticien extends Document {
     rue: string;
     ville: string;
     codePostal: string;
-    visites: Schema.Types.ObjectId[];
+    visites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visite' }]
 }
 
 const praticienSchema: Schema = new Schema({

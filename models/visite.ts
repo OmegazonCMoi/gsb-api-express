@@ -21,7 +21,7 @@ const secretKey = process.env.SECRET_KEY;
 
 visiteSchema.plugin(mongooseEncryption, {
   secret: secretKey,
-  encryptedFields: ['dateVisite', 'commentaire', 'visiteur', 'praticien', 'motif'],
+  encryptedFields: ['dateVisite', 'commentaire', 'visiteur', 'motif'],
 });
 
 export default mongoose.model<IVisite>('Visite', visiteSchema);

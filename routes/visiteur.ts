@@ -8,7 +8,6 @@ import {
   addPraticienToPortefeuille,
   getPraticiensFromPortefeuille,
 } from "../controllers/visiteur";
-import { signupValidators } from "../middleware/validation/visiteur";
 import { authMiddleware } from "../middleware/auth";
 
 const router = Router();

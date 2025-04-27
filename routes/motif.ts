@@ -5,6 +5,6 @@ import { authMiddleware } from "../middleware/auth";
 const router = Router();
 
 router.post("/", authMiddleware, createMotif);
-router.get("/", authMiddleware, getMotifs);
+router.get("/", getMotifs);
 
 export default router;
