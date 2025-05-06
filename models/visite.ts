@@ -7,6 +7,7 @@ export interface IVisite extends Document {
     visiteur: Schema.Types.ObjectId;
     praticien: Schema.Types.ObjectId;
     motif: Schema.Types.ObjectId;
+    evenement?: string | null;
 }
 
 const visiteSchema: Schema = new Schema({
@@ -14,7 +15,14 @@ const visiteSchema: Schema = new Schema({
     commentaire: { type: String, required: true },
     visiteur : { type: Schema.Types.ObjectId, ref: 'Visiteur', required: true },
     praticien : { type: Schema.Types.ObjectId, ref: 'Praticien', required: true },
-    motif: { type: Schema.Types.ObjectId, ref: 'Motif', required: true }
+    motif: { type: Schema.Types.ObjectId, ref: 'Motif', required: true },
+    evenement: {
+        type: Schema.Types.ObjectId,
+        ref: 'Evenement',
+        default: null
+    }
+}, {
+    timestamps: true
 });
 
 const secretKey = process.env.SECRET_KEY;

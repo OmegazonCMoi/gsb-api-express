@@ -4,6 +4,7 @@ import visiteurRoutes from './routes/visiteur';
 import visiteRoutes from './routes/visite';
 import praticienRoutes from './routes/praticien';
 import motifRoutes from './routes/motif';
+import evenementRoutes from './routes/evenement';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/visiteurs', visiteurRoutes);
 app.use('/api/visites', visiteRoutes);
 app.use('/api/praticiens', praticienRoutes);
 app.use('/api/motifs', motifRoutes);
+app.use('/api/evenements', evenementRoutes);
 
 // MongoDB Connection
 mongoose.connect('mongodb+srv://fabianmenoni:Zitoune69@express-test.jabh7.mongodb.net/?retryWrites=true&w=majority&appName=Express-test')

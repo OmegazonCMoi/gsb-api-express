@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Visite from '../models/visite';
 import Praticien from "../models/praticien";
+import Evenement from '../models/evenement';
 
 export const createVisite = async (req: Request, res: Response) => {
   try {
@@ -98,4 +99,83 @@ export const updateVisite = async (req: Request, res: Response): Promise<void> =
       res.status(500).json({ message: 'Erreur inconnue' });
     }
   }
+};
+
+// Inviter un praticien à un événement
+export const inviterPraticienEvenement = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { evenementId } = req.body;
+
+        // Vérifier si l'événement existe
+        const evenement = await Evenement.findById(evenementId);
+        if (!evenement) {
+            res.status(404).json({ message: "Événement non trouvé" });
+        }
+
+        // Vérifier si la visite existe
+        const visite = await Visite.findById(id);
+        if (!visite) {
+            res.status(404).json({ message: "Visite non trouvée" });
+        }
+
+        // Vérifier si une invitation existe déjà
+        if (visite && visite.evenement) {
+            res.status(400).json({ message: "Une invitation existe déjà pour cette visite" });
+        }
+
+        // Mettre à jour la visite avec l'événement
+        if (visite) {
+            visite.evenement = evenementId;
+            await visite.save();
+        }
+
+        res.json(visite);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de l'invitation à l'événement", error });
+    }
+};
+
+// Annuler l'invitation à un événement
+export const annulerInvitationEvenement = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        // Vérifier si la visite existe
+        const visite = await Visite.findById(id);
+        if (!visite) {
+            res.status(404).json({ message: "Visite non trouvée" });
+        }
+
+        // Vérifier si une invitation existe
+        if (visite && !visite.evenement) {
+            res.status(400).json({ message: "Aucune invitation n'existe pour cette visite" });
+            return;
+        }
+
+        // Supprimer l'invitation
+        if (visite) {
+            visite.evenement = null;
+            await visite.save();
+        }
+
+        res.json(visite);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de l'annulation de l'invitation", error });
+    }
+};
+
+// Supprimer une visite
+export const deleteVisite = async (req: Request, res: Response) => {
+    try {
+        const visite = await Visite.findByIdAndDelete(req.params.id);
+        
+        if (!visite) {
+            res.status(404).json({ message: "Visite non trouvée" });
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la suppression de la visite", error });
+    }
 };

@@ -9,6 +9,9 @@ export interface IVisiteur extends Document {
   password: string;
   portefeuillePraticiens: any[];
   comparePassword(candidatePassword: string): Promise<boolean>;
+  nom: string;
+  prenom: string;
+  role: 'visiteur' | 'responsable';
 }
 
 // Define the schema for the 'Visiteur' model (only email and password required)
@@ -19,10 +22,15 @@ const visiteurSchema: Schema = new Schema(
     rue: { type: String },
     ville: { type: String },
     codePostal: { type: String },
-    nom: { type: String },
-    prenom: { type: String },
+    nom: { type: String, required: true },
+    prenom: { type: String, required: true },
     tel: { type: String },
-    portefeuillePraticiens: [{ type: Schema.Types.ObjectId, ref: 'Praticien' }]
+    portefeuillePraticiens: [{ type: Schema.Types.ObjectId, ref: 'Praticien' }],
+    role: { 
+      type: String, 
+      enum: ['visiteur', 'responsable'],
+      default: 'visiteur'
+    }
   },
   { timestamps: true }
 );
